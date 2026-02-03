@@ -1,22 +1,44 @@
 extends Node2D
 @export var tower_scene: PackedScene
+@export var tower_medium_scene: PackedScene
+@export var tower_heavy_scene: PackedScene
 @export var start_gold: int = 30
 @export var start_lives: int = 10
 @export var world_rect := Rect2(Vector2(0, 0), Vector2(960, 540))
+
 var gold: int
 var lives: int
+var selected_spot = null
+
 @onready var towers_root: Node2D = $Towers
 @onready var ui_hint: Label = $UI/Notifications
 @onready var ui_gold: Label = $UI/Gold
 @onready var ui_lives: Label = $UI/Lives
 @onready var cam: Camera2D = $Camera2D
 
+# Tower costs
+const BASIC_COST = 10
+const MEDIUM_COST = 15
+const HEAVY_COST = 20
+
+var tower_selector: Control = null
+
 func _ready() -> void:
 	gold = start_gold
 	lives = start_lives
 	_update_ui()
+	
 	for spot in $BuildSpots.get_children():
 		spot.clicked.connect(_on_build_spot_clicked)
+	
+	if has_node("UI/TowerSelector"):
+		tower_selector = $UI/TowerSelector
+		tower_selector.tower_selected.connect(_on_tower_type_selected)
+		tower_selector.cancelled.connect(_on_tower_selection_cancelled)
+		tower_selector.upgrade_selected.connect(_on_upgrade_selected)
+		tower_selector.hide()
+	else:
+		print("Warning: TowerSelector not found in UI")
 	
 	cam.limit_left = int(world_rect.position.x)
 	cam.limit_top = int(world_rect.position.y)
@@ -26,22 +48,114 @@ func _ready() -> void:
 
 func _on_build_spot_clicked(spot) -> void:
 	if spot.has_tower:
-		_hint("There is already a tower here why r u keeping building here?")
+		# Tower already exists - show upgrade menu
+		if spot.tower_type == "heavy":
+			_hint("No more upgrades available")
+			return
+		if tower_selector != null:
+			selected_spot = spot
+			tower_selector.show_upgrade_menu(spot.global_position + Vector2(30, -50), spot.tower_type)
 		return
-	if gold < spot.price:
-		_hint("Gold not enough! Need %d" % spot.price)
+	
+	# No tower - show build menu
+	if tower_selector != null:
+		selected_spot = spot
+		tower_selector.show_at_position(spot.global_position + Vector2(30, -50))
+	else:
+		_build_tower(spot, "basic")
+
+func _on_tower_type_selected(tower_type: String) -> void:
+	if selected_spot == null:
 		return
-	if tower_scene == null:
-		_hint("Undefined tower_scene")
+	_build_tower(selected_spot, tower_type)
+	selected_spot = null
+
+func _on_upgrade_selected(upgrade_to_type: String) -> void:
+	if selected_spot == null:
 		return
-	gold -= spot.price
-	var t = tower_scene.instantiate()
+	
+	var upgrade_cost = 0
+	match upgrade_to_type:
+		"medium":
+			upgrade_cost = MEDIUM_COST
+		"heavy":
+			upgrade_cost = HEAVY_COST
+	
+	if gold < upgrade_cost:
+		_hint("Gold not enough! Need %d" % upgrade_cost)
+		selected_spot = null
+		return
+	
+	# Remove old tower
+	if selected_spot.tower_node != null:
+		selected_spot.tower_node.queue_free()
+	
+	# Build new upgraded tower
+	gold -= upgrade_cost
+	var tower_scene_to_use = null
+	
+	match upgrade_to_type:
+		"medium":
+			tower_scene_to_use = tower_medium_scene
+		"heavy":
+			tower_scene_to_use = tower_heavy_scene
+	
+	if tower_scene_to_use == null:
+		_hint("Tower scene not set for: %s" % upgrade_to_type)
+		selected_spot = null
+		return
+	
+	var t = tower_scene_to_use.instantiate()
+	towers_root.add_child(t)
+	t.global_position = selected_spot.global_position
+	
+	selected_spot.tower_type = upgrade_to_type
+	selected_spot.tower_node = t
+	selected_spot.queue_redraw()
+	
+	_hint("Upgraded to %s tower -%d gold" % [upgrade_to_type, upgrade_cost])
+	_update_ui()
+	selected_spot = null
+
+func _build_tower(spot, tower_type: String) -> void:
+	var cost = 0
+	var tower_scene_to_use = null
+	
+	match tower_type:
+		"basic":
+			cost = BASIC_COST
+			tower_scene_to_use = tower_scene
+		"medium":
+			cost = MEDIUM_COST
+			tower_scene_to_use = tower_medium_scene
+		"heavy":
+			cost = HEAVY_COST
+			tower_scene_to_use = tower_heavy_scene
+	
+	if gold < cost:
+		_hint("Gold not enough! Need %d" % cost)
+		return
+	
+	if tower_scene_to_use == null:
+		_hint("Tower scene not set for type: %s" % tower_type)
+		return
+	
+	# Build the tower
+	gold -= cost
+	var t = tower_scene_to_use.instantiate()
 	towers_root.add_child(t)
 	t.global_position = spot.global_position
+	
 	spot.has_tower = true
+	spot.tower_type = tower_type
+	spot.tower_node = t
 	spot.queue_redraw()
-	_hint("Built success -%d" % spot.price)
+	_hint("Built %s tower -%d gold" % [tower_type, cost])
 	_update_ui()
+
+func _on_tower_selection_cancelled() -> void:
+	selected_spot = null
+	_hint("Build cancelled")
 
 func _on_enemy_reached_goal(_enemy) -> void:
 	lives -= 1
@@ -51,7 +165,6 @@ func _on_enemy_reached_goal(_enemy) -> void:
 		_hint("Game Over")
 		get_tree().paused = true
 
-# Gold only on death
 func _on_enemy_died(enemy) -> void:
 	gold += enemy.gold_reward
 	_hint("Enemy killed! +%d gold" % enemy.gold_reward)
@@ -63,8 +176,7 @@ func _hint(msg: String) -> void:
 func _update_ui() -> void:
 	ui_gold.text = "Gold: %d" % gold
 	ui_lives.text = "Lives: %d" % lives
-	
-	
+
 func debug_check_path_inside_world() -> void:
 	var pts = $Path2D.curve.get_baked_points()
 	for p in pts:

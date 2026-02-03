@@ -3,3 +3,9 @@ res://Enemy.gd
 res://Main.gd
 res://Spawner.gd
 res://Bullets.gd
+res://TowerMedium.tscn
+res://BuildSpot.gd
+res://TowerSelector.gd
+res://TowerHeavy.tscn
+res://Tower.gd
+res://Tower.tscn

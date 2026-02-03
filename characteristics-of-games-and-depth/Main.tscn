@@ -3,9 +3,12 @@
 [ext_resource type="Script" uid="uid://1i014y4t6vh5" path="res://Main.gd" id="1_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://r2rn54cqxaqd" path="res://Tower.tscn" id="1_uu6xs"]
 [ext_resource type="PackedScene" uid="uid://dgueo26fhkd0h" path="res://Enemy.tscn" id="2_r0du0"]
+[ext_resource type="PackedScene" uid="uid://l0l7qnq20odm" path="res://TowerMedium.tscn" id="3_03owx"]
 [ext_resource type="Script" uid="uid://dqx0p7pjkvtin" path="res://Spawner.gd" id="3_r0du0"]
 [ext_resource type="PackedScene" uid="uid://btpkfpq5vd1xv" path="res://BuildSpot.tscn" id="4_3dxm6"]
 [ext_resource type="Script" uid="uid://dvv6arnvtku8m" path="res://Map.gd" id="4_fos0i"]
+[ext_resource type="PackedScene" uid="uid://cml72vhc5c3bc" path="res://TowerHeavy.tscn" id="4_wkp8b"]
+[ext_resource type="Script" uid="uid://c1dk31d5fwtjd" path="res://TowerSelector.gd" id="6_3dxm6"]
 
 [sub_resource type="Curve2D" id="Curve2D_uu6xs"]
 _data = {
@@ -16,6 +19,8 @@ point_count = 6
 [node name="Main" type="Node2D" unique_id=542372704]
 script = ExtResource("1_cm0pq")
 tower_scene = ExtResource("1_uu6xs")
+tower_medium_scene = ExtResource("3_03owx")
+tower_heavy_scene = ExtResource("4_wkp8b")
 
 [node name="Towers" type="Node2D" parent="." unique_id=1034446831]
 z_index = 20
@@ -90,6 +95,44 @@ offset_left = 10.0
 offset_top = 80.0
 offset_right = 50.0
 offset_bottom = 103.0
+
+[node name="TowerSelector" type="Control" parent="UI" unique_id=1095970298]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("6_3dxm6")
+
+[node name="Panel" type="Panel" parent="UI/TowerSelector" unique_id=611451548]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/TowerSelector/Panel" unique_id=966614716]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BasicButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer" unique_id=1087725781]
+layout_mode = 2
+text = "Basic Tower (10 gold)"
+
+[node name="MediumButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer" unique_id=1239829260]
+layout_mode = 2
+text = " Medium Tower (15 gold)"
+
+[node name="HeavyButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer" unique_id=300508587]
+layout_mode = 2
+text = "Heavy Tower (20 gold)"
+
+[node name="CancelButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer" unique_id=1338050997]
+layout_mode = 2
+text = "Cancel"
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1857574544]
 light_mask = 15

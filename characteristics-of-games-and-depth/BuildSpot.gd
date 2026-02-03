@@ -1,11 +1,11 @@
 extends Area2D
-
 @export var price: int = 10
 @export var built_color: Color = Color(0.3, 0.9, 0.3)
 @export var empty_color: Color = Color(0.7, 0.7, 0.7)
 @export var radius: float = 18.0
-
 var has_tower := false
+var tower_type: String = ""  # Add this to track tower type ("basic", "medium", "heavy")
+var tower_node: Node2D = null  # Add this to reference the actual tower
 
 signal clicked(spot)
 
