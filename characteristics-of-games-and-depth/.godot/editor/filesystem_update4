@@ -1,0 +1,5 @@
+res://Main.tscn
+res://Enemy.gd
+res://Main.gd
+res://Spawner.gd
+res://Bullets.gd

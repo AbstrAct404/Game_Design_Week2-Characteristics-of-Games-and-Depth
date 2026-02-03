@@ -1,0 +1,15 @@
+63f7b34db8d8cdea90c76aacccf841ec
+::res://::1770149728
+BuildSpot.gd::GDScript::4656270329209784978::1770149570::0::1::::<>Area2D<><>0<>0<><>::
+BuildSpot.tscn::PackedScene::3751591291982199475::1770149570::0::1::::<><><>0<>0<><>::uid://b7lsdeniktx3g::::res://BuildSpot.gd
+Bullets.gd::GDScript::4325580706327747636::1770149570::0::1::::<>Area2D<><>0<>0<><>::
+Bullets.tscn::PackedScene::2497690695804309973::1770149570::0::1::::<><><>0<>0<><>::uid://b2vlxgxp5biw7::::res://Bullets.gd
+Enemy.gd::GDScript::820458609667150704::1770149570::0::1::::<>CharacterBody2D<><>0<>0<><>::
+Enemy.tscn::PackedScene::7621952003330747013::1770149570::0::1::::<><><>0<>0<><>::uid://lxo3lpfp53q7::::res://Enemy.gd
+icon.svg::CompressedTexture2D::2827785976245314004::1770149570::1770149738::1::::<><><>0<>0<>1f08ada5733f25a50f53506329a790e1<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
+Main.gd::GDScript::1842990873678729896::1770149570::0::1::::<>Node2D<><>0<>0<><>::
+Main.tscn::PackedScene::3978326230879169769::1770149570::0::1::::<><><>0<>0<><>::uid://1i014y4t6vh5::::res://Main.gd<>uid://r2rn54cqxaqd::::res://Tower.tscn<>uid://dgueo26fhkd0h::::res://Enemy.tscn<>uid://dqx0p7pjkvtin::::res://Spawner.gd<>uid://btpkfpq5vd1xv::::res://BuildSpot.tscn<>uid://dvv6arnvtku8m::::res://Map.gd
+Map.gd::GDScript::8678462841048360350::1770149570::0::1::::<>Node2D<><>0<>0<><>::
+Spawner.gd::GDScript::8331310653701331857::1770149570::0::1::::<>Node<><>0<>0<><>::
+Tower.gd::GDScript::1850816749031655652::1770149570::0::1::::<>Node2D<><>0<>0<><>::
+Tower.tscn::PackedScene::1250005566016947163::1770149570::0::1::::<><><>0<>0<><>::uid://1msxf0wu8uci::::res://Tower.gd<>uid://bbt5uotr0yh5n::::res://Bullets.tscn
