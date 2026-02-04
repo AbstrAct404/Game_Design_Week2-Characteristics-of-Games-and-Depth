@@ -15,7 +15,7 @@ bullet_speed = 1500.0
 tower_color = Color(0.75025874, 0.5837412, 0.12088887, 1)
 
 [node name="Range" type="Area2D" parent="." unique_id=1069272243]
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=1698917934]
 modulate = Color(1, 1, 1, 0.21960784)

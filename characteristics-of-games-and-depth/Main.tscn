@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://dvv6arnvtku8m" path="res://Map.gd" id="4_fos0i"]
 [ext_resource type="PackedScene" uid="uid://cml72vhc5c3bc" path="res://TowerHeavy.tscn" id="4_wkp8b"]
 [ext_resource type="Script" uid="uid://c1dk31d5fwtjd" path="res://TowerSelector.gd" id="6_3dxm6"]
+[ext_resource type="PackedScene" uid="uid://pu62j55jwj4g" path="res://Boss.tscn" id="9_wkp8b"]
 
 [sub_resource type="Curve2D" id="Curve2D_uu6xs"]
 _data = {
@@ -75,6 +76,7 @@ z_index = 30
 [node name="Spawner" type="Node2D" parent="." unique_id=1562102082]
 script = ExtResource("3_r0du0")
 enemy_scene = ExtResource("2_r0du0")
+boss_scene = ExtResource("9_wkp8b")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=2041260162]
 

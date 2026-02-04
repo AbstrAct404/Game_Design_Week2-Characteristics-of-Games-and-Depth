@@ -9,3 +9,7 @@ res://TowerSelector.gd
 res://TowerHeavy.tscn
 res://Tower.gd
 res://Tower.tscn
+res://Boss.gd
+res://Boss.tscn
+res://Enemy.tscn
+res://Bullets.tscn

@@ -9,10 +9,9 @@ radius = 160.0
 [node name="Tower" type="Node2D" unique_id=118933422]
 script = ExtResource("1_arn3v")
 bullet_scene = ExtResource("2_bn6qc")
-bullet_speed = 1000.0
 
 [node name="Range" type="Area2D" parent="." unique_id=2111852724]
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=702456344]
 modulate = Color(1, 1, 1, 0.21960784)
