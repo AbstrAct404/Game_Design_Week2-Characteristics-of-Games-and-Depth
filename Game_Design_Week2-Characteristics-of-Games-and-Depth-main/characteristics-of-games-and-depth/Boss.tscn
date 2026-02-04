@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://pu62j55jwj4g"]
+
+[ext_resource type="Script" uid="uid://yrgd43gmpsy7" path="res://Boss.gd" id="1_dtosr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dtosr"]
+size = Vector2(40, 40)
+
+[node name="Boss" type="CharacterBody2D" unique_id=1176354692]
+script = ExtResource("1_dtosr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2115989234]
+shape = SubResource("RectangleShape2D_dtosr")

@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://r2rn54cqxaqd"]
+
+[ext_resource type="Script" uid="uid://1msxf0wu8uci" path="res://Tower.gd" id="1_arn3v"]
+[ext_resource type="PackedScene" uid="uid://bbt5uotr0yh5n" path="res://Bullets.tscn" id="2_bn6qc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bn6qc"]
+radius = 160.0
+
+[node name="Tower" type="Node2D" unique_id=118933422]
+script = ExtResource("1_arn3v")
+fire_interval = 0.7
+bullet_scene = ExtResource("2_bn6qc")
+bullet_speed = 1200.0
+
+[node name="Range" type="Area2D" parent="." unique_id=2111852724]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Range" unique_id=702456344]
+modulate = Color(1, 1, 1, 0.21960784)
+shape = SubResource("CircleShape2D_bn6qc")
+
+[node name="FireTimer" type="Timer" parent="." unique_id=1162582974]
+autostart = true
