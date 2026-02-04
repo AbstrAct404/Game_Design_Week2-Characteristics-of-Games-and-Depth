@@ -34,3 +34,6 @@ func take_damage(dmg: int) -> void:
 func _draw() -> void:
 	var s = enemy_size
 	draw_rect(Rect2(Vector2(-s/2.0, -s/2.0), Vector2(s, s)), enemy_color)
+	
+func get_progress() -> float:
+	return progress
