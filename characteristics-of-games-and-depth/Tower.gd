@@ -12,11 +12,13 @@ extends Node2D
 
 var target: Node2D = null
 var enemies_in_range: Array[Node2D] = []
+var _base_fire_interval: float = 0.0
 
 
 func _ready() -> void:
 	queue_redraw()
 	fire_timer.wait_time = fire_interval
+	_base_fire_interval = fire_timer.wait_time
 	fire_timer.autostart = true
 	fire_timer.timeout.connect(_on_fire_timer_timeout)
 	range_area.body_entered.connect(_on_body_entered)
@@ -106,3 +108,8 @@ func _on_fire_timer_timeout() -> void:
 		bullet.damage = bullet_damage
 		bullet.speed = bullet_speed
 		bullet.dir = d
+		
+func set_attack_speed_multiplier(mult: float) -> void:
+	if mult <= 0.0:
+		mult = 1.0
+	fire_timer.wait_time = _base_fire_interval / mult

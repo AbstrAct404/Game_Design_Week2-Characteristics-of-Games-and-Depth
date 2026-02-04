@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bwxepmi3luxyn"]
+[gd_scene load_steps=13 format=3 uid="uid://bwxepmi3luxyn"]
 
 [ext_resource type="Script" uid="uid://1i014y4t6vh5" path="res://Main.gd" id="1_cm0pq"]
 [ext_resource type="PackedScene" uid="uid://r2rn54cqxaqd" path="res://Tower.tscn" id="1_uu6xs"]
@@ -8,12 +8,13 @@
 [ext_resource type="PackedScene" uid="uid://btpkfpq5vd1xv" path="res://BuildSpot.tscn" id="4_3dxm6"]
 [ext_resource type="Script" uid="uid://dvv6arnvtku8m" path="res://Map.gd" id="4_fos0i"]
 [ext_resource type="PackedScene" uid="uid://cml72vhc5c3bc" path="res://TowerHeavy.tscn" id="4_wkp8b"]
+[ext_resource type="PackedScene" uid="uid://hjhjdcdv7thx" path="res://TowerShotgun.tscn" id="5_20pc6"]
 [ext_resource type="Script" uid="uid://c1dk31d5fwtjd" path="res://TowerSelector.gd" id="6_3dxm6"]
 [ext_resource type="PackedScene" uid="uid://pu62j55jwj4g" path="res://Boss.tscn" id="9_wkp8b"]
 
 [sub_resource type="Curve2D" id="Curve2D_uu6xs"]
 _data = {
-"points": PackedVector2Array(0, 0, 100, 300, 0, 0, -91.53533, 85.62982, 91.53533, -85.62982, 263, 359, -140.25575, -19.192892, 140.25575, 19.192892, 452, 79, -144.68488, -19.192892, 144.68488, 19.192892, 608, 475, -126.96836, -7.3818817, 126.96836, 7.3818817, 905, 113, -143.2085, -1.4763763, 143.2085, 1.4763763, 1202.8177, 631.03455)
+"points": PackedVector2Array(0, 0, 100, 300, 0, 0, -91.53533, 85.62982, 91.53533, -85.62982, 235.94942, 423.9308, -140.25575, -19.192892, 140.25575, 19.192892, 452, 79, -144.68488, -19.192892, 144.68488, 19.192892, 608, 475, -126.96836, -7.3818817, 126.96836, 7.3818817, 832.6393, 105.9827, -143.2085, -1.4763763, 143.2085, 1.4763763, 974.2089, 509.49478)
 }
 point_count = 6
 
@@ -22,6 +23,7 @@ script = ExtResource("1_cm0pq")
 tower_scene = ExtResource("1_uu6xs")
 tower_medium_scene = ExtResource("3_03owx")
 tower_heavy_scene = ExtResource("4_wkp8b")
+tower_shotgun_scene = ExtResource("5_20pc6")
 
 [node name="Towers" type="Node2D" parent="."]
 z_index = 20
@@ -36,7 +38,7 @@ z_index = -10
 script = ExtResource("4_fos0i")
 
 [node name="Path2D" type="Path2D" parent="."]
-scale = Vector2(0.95359415, 1.0284698)
+scale = Vector2(0.96385884, 1.0637989)
 curve = SubResource("Curve2D_uu6xs")
 
 [node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
@@ -45,25 +47,25 @@ rotation = 1.2490457
 [node name="BuildSpots" type="Node2D" parent="."]
 
 [node name="BuiltSpot" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
-position = Vector2(203, 255)
+position = Vector2(190, 331)
 
 [node name="BuiltSpot2" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
 position = Vector2(590, 410)
 
 [node name="BuiltSpot3" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
-position = Vector2(885, 401)
+position = Vector2(771, 437)
 
 [node name="BuiltSpot4" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
-position = Vector2(426, 35)
+position = Vector2(410, 167)
 
 [node name="BuiltSpot5" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
-position = Vector2(854, 167)
+position = Vector2(787, 185)
 
 [node name="BuiltSpot7" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
-position = Vector2(1057, 338)
+position = Vector2(907, 328)
 
 [node name="BuiltSpot9" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
-position = Vector2(419, 235)
+position = Vector2(392, 374)
 
 [node name="Projectiles" type="Node2D" parent="."]
 z_index = 30
@@ -135,6 +137,6 @@ text = "Cancel"
 light_mask = 15
 visibility_layer = 15
 limit_left = 0
-limit_top = -1
-limit_right = 1145
-limit_bottom = 646
+limit_top = 0
+limit_right = 1151
+limit_bottom = 645

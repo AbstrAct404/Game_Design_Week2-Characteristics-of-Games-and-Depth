@@ -2,6 +2,7 @@ extends Node2D
 @export var tower_scene: PackedScene
 @export var tower_medium_scene: PackedScene
 @export var tower_heavy_scene: PackedScene
+@export var tower_shotgun_scene: PackedScene
 @export var start_gold: int = 30
 @export var start_lives: int = 10
 @export var world_rect := Rect2(Vector2(0, 0), Vector2(960, 540))
@@ -23,6 +24,10 @@ var game_over: bool = false
 const BASIC_COST = 10
 const MEDIUM_COST = 20
 const HEAVY_COST = 35
+const SPEED_BOOST_COST := 20
+const SPEED_BOOST_DURATION := 5.0
+var speed_boost_active := false
+
 
 var tower_selector: Control = null
 
@@ -53,23 +58,28 @@ func _ready() -> void:
 	cam.limit_left = int(world_rect.position.x)
 	cam.limit_top = int(world_rect.position.y)
 	cam.limit_right = int(world_rect.position.x + world_rect.size.x)
-	cam.limit_bottom = int(world_rect.position.y + world_rect.size.y)
+	cam.limit_bottom = int(world_rect.position.y + world_rect.size.y)# Center the camera on the game world so it shows the full world_rect.
+	cam.global_position = world_rect.position + world_rect.size * 0.5
+
 	debug_check_path_inside_world()
 
 func _input(event: InputEvent) -> void:
-	# Check for R key press for restart
+	# Boost item: press B
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_B:
+			use_speed_boost()
+
+	# Restart
 	if (game_over or game_won) and event is InputEventKey:
 		if event.keycode == KEY_R and event.pressed and not event.echo:
 			_restart_game()
+
 
 func _on_build_spot_clicked(spot) -> void:
 	if game_won:
 		return  # Don't allow building after winning
 	
 	if spot.has_tower:
-		if spot.tower_type == "heavy":
-			_hint("No more upgrades available")
-			return
 		if tower_selector != null:
 			selected_spot = spot
 			tower_selector.show_upgrade_menu(spot.global_position + Vector2(30, -50), spot.tower_type)
@@ -90,14 +100,87 @@ func _on_tower_type_selected(tower_type: String) -> void:
 func _on_upgrade_selected(upgrade_to_type: String) -> void:
 	if selected_spot == null:
 		return
-	
-	var upgrade_cost = 0
+		
+		# ---- FREE SWITCH: heavy <-> shotgun ----
+	if upgrade_to_type == "shotgun":
+		# only allow heavy -> shotgun
+		if selected_spot.tower_type != "heavy":
+			_hint("Only Heavy can switch to Shotgun")
+			selected_spot = null
+			return
+
+		if tower_shotgun_scene == null:
+			_hint("Shotgun tower scene not set")
+			selected_spot = null
+			return
+
+		if selected_spot.tower_node != null:
+			selected_spot.tower_node.queue_free()
+
+		var t = tower_shotgun_scene.instantiate()
+		t.add_to_group("towers")
+		towers_root.add_child(t)
+		t.global_position = selected_spot.global_position
+
+		selected_spot.tower_type = "shotgun"
+		selected_spot.tower_node = t
+		selected_spot.has_tower = true
+		selected_spot.queue_redraw()
+
+		_hint("Switched to Shotgun tower")
+		_update_ui()
+		selected_spot = null
+		return
+
+	if upgrade_to_type == "heavy" and selected_spot.tower_type == "shotgun":
+		# shotgun -> heavy (free)
+		if tower_heavy_scene == null:
+			_hint("Heavy tower scene not set")
+			selected_spot = null
+			return
+
+		if selected_spot.tower_node != null:
+			selected_spot.tower_node.queue_free()
+
+		var t2 = tower_heavy_scene.instantiate()
+		t2.add_to_group("towers")
+		towers_root.add_child(t2)
+		t2.global_position = selected_spot.global_position
+
+		selected_spot.tower_type = "heavy"
+		selected_spot.tower_node = t2
+		selected_spot.has_tower = true
+		selected_spot.queue_redraw()
+
+		_hint("Switched to Heavy tower")
+		_update_ui()
+		selected_spot = null
+		return
+	# ---- END FREE SWITCH ----
+
+
+
+	var upgrade_cost: int = 0
+	# Upgrade pricing rule:
+	# cost = target_price - (current_price / 2)
+	var current_cost: int = 0
+	match selected_spot.tower_type:
+		"basic":
+			current_cost = BASIC_COST
+		"medium":
+			current_cost = MEDIUM_COST
+		"heavy":
+			current_cost = HEAVY_COST
+
+	var target_cost: int = 0
 	match upgrade_to_type:
 		"medium":
-			upgrade_cost = MEDIUM_COST
+			target_cost = MEDIUM_COST
 		"heavy":
-			upgrade_cost = HEAVY_COST
-	
+			target_cost = HEAVY_COST
+
+	upgrade_cost = target_cost - int(current_cost / 2)
+
 	if gold < upgrade_cost:
 		_hint("Gold not enough! Need %d" % upgrade_cost)
 		selected_spot = null
@@ -121,6 +204,7 @@ func _on_upgrade_selected(upgrade_to_type: String) -> void:
 		return
 	
 	var t = tower_scene_to_use.instantiate()
+	t.add_to_group("towers")
 	towers_root.add_child(t)
 	t.global_position = selected_spot.global_position
 	
@@ -157,6 +241,7 @@ func _build_tower(spot, tower_type: String) -> void:
 	
 	gold -= cost
 	var t = tower_scene_to_use.instantiate()
+	t.add_to_group("towers")
 	towers_root.add_child(t)
 	t.global_position = spot.global_position
 	
@@ -170,6 +255,24 @@ func _build_tower(spot, tower_type: String) -> void:
 func _on_tower_selection_cancelled() -> void:
 	selected_spot = null
 	_hint("Build cancelled")
+	
+func use_speed_boost() -> void:
+	if speed_boost_active:
+		return
+	if gold < SPEED_BOOST_COST:
+		return
+
+	gold -= SPEED_BOOST_COST
+	_update_ui()
+	speed_boost_active = true
+
+	get_tree().call_group("towers", "set_attack_speed_multiplier", 2.0)
+
+	await get_tree().create_timer(SPEED_BOOST_DURATION).timeout
+
+	get_tree().call_group("towers", "set_attack_speed_multiplier", 1.0)
+	speed_boost_active = false
+
 
 func _on_enemy_reached_goal(_enemy) -> void:
 	lives -= 1

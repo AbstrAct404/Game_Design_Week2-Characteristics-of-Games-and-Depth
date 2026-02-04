@@ -3,6 +3,15 @@ signal tower_selected(tower_type)
 signal cancelled
 signal upgrade_selected(upgrade_to_type)
 
+# Prices (keep in sync with Main.gd)
+const BASIC_COST = 10
+const MEDIUM_COST = 20
+const HEAVY_COST = 35
+
+func _upgrade_price(from_cost: int, to_cost: int) -> int:
+	return to_cost - int(from_cost / 2)
+
+
 @onready var basic_btn: Button = $Panel/VBoxContainer/BasicButton
 @onready var medium_btn: Button = $Panel/VBoxContainer/MediumButton
 @onready var heavy_btn: Button = $Panel/VBoxContainer/HeavyButton
@@ -41,28 +50,46 @@ func _update_button_text_for_build() -> void:
 	heavy_btn.disabled = false
 
 func _update_button_text_for_upgrade(tower_type: String) -> void:
+	# In upgrade mode, Basic button should not show build text.
+	basic_btn.text = "Upgrade"
+	basic_btn.disabled = true
+
+	# Reset others first (avoid leftover text from previous mode)
+	medium_btn.disabled = false
+	heavy_btn.disabled = false
+
 	match tower_type:
 		"basic":
-			basic_btn.text = "Already Basic"
-			basic_btn.disabled = true
-			medium_btn.text = "Upgrade to Medium (20 gold)"
-			medium_btn.disabled = false
-			heavy_btn.text = "Upgrade to Heavy (35 gold)"
-			heavy_btn.disabled = false
+			medium_btn.text = "Upgrade to Medium (%d gold)" % _upgrade_price(BASIC_COST, MEDIUM_COST)
+			heavy_btn.text = "Upgrade to Heavy (%d gold)" % _upgrade_price(BASIC_COST, HEAVY_COST)
+
 		"medium":
-			basic_btn.text = "Cannot Downgrade"
-			basic_btn.disabled = true
 			medium_btn.text = "Already Medium"
 			medium_btn.disabled = true
-			heavy_btn.text = "Upgrade to Heavy (35 gold)"
-			heavy_btn.disabled = false
+			heavy_btn.text = "Upgrade to Heavy (%d gold)" % _upgrade_price(MEDIUM_COST, HEAVY_COST)
+
 		"heavy":
 			basic_btn.text = "Max Level"
 			basic_btn.disabled = true
-			medium_btn.text = "Max Level"
-			medium_btn.disabled = true
-			heavy_btn.text = "Already Heavy (Max)"
+
+			medium_btn.text = "Switch to Shotgun"
+			medium_btn.disabled = false
+
+			heavy_btn.text = "Already Heavy"
 			heavy_btn.disabled = true
+			
+		"shotgun":
+			basic_btn.text = "Max Level"
+			basic_btn.disabled = true
+
+			medium_btn.text = "Switch to Heavy"
+			medium_btn.disabled = false
+
+			heavy_btn.text = "Already Shotgun"
+			heavy_btn.disabled = true
+
+
+
 
 func _on_basic_pressed() -> void:
 	if is_upgrade_mode:
@@ -73,10 +100,17 @@ func _on_basic_pressed() -> void:
 
 func _on_medium_pressed() -> void:
 	if is_upgrade_mode:
-		emit_signal("upgrade_selected", "medium")
+		if current_tower_type == "heavy":
+			emit_signal("upgrade_selected", "shotgun") # heavy -> shotgun
+		elif current_tower_type == "shotgun":
+			emit_signal("upgrade_selected", "heavy")   # shotgun -> heavy
+		else:
+			emit_signal("upgrade_selected", "medium")
 	else:
 		emit_signal("tower_selected", "medium")
 	hide()
+
+
 
 func _on_heavy_pressed() -> void:
 	if is_upgrade_mode:
