@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://btpkfpq5vd1xv"]
+
+[ext_resource type="Script" uid="uid://b7lsdeniktx3g" path="res://BuildSpot.gd" id="1_4yie0"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xsdy1"]
+radius = 20.0
+
+[node name="BuiltSpot" type="Area2D"]
+script = ExtResource("1_4yie0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_xsdy1")
+
+[node name="Price" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Notification" type="Node2D" parent="."]

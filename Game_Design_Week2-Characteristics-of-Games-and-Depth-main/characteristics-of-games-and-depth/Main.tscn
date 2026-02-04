@@ -1,0 +1,140 @@
+[gd_scene load_steps=12 format=3 uid="uid://bwxepmi3luxyn"]
+
+[ext_resource type="Script" uid="uid://1i014y4t6vh5" path="res://Main.gd" id="1_cm0pq"]
+[ext_resource type="PackedScene" uid="uid://r2rn54cqxaqd" path="res://Tower.tscn" id="1_uu6xs"]
+[ext_resource type="PackedScene" uid="uid://dgueo26fhkd0h" path="res://Enemy.tscn" id="2_r0du0"]
+[ext_resource type="PackedScene" uid="uid://l0l7qnq20odm" path="res://TowerMedium.tscn" id="3_03owx"]
+[ext_resource type="Script" uid="uid://dqx0p7pjkvtin" path="res://Spawner.gd" id="3_r0du0"]
+[ext_resource type="PackedScene" uid="uid://btpkfpq5vd1xv" path="res://BuildSpot.tscn" id="4_3dxm6"]
+[ext_resource type="Script" uid="uid://dvv6arnvtku8m" path="res://Map.gd" id="4_fos0i"]
+[ext_resource type="PackedScene" uid="uid://cml72vhc5c3bc" path="res://TowerHeavy.tscn" id="4_wkp8b"]
+[ext_resource type="Script" uid="uid://c1dk31d5fwtjd" path="res://TowerSelector.gd" id="6_3dxm6"]
+[ext_resource type="PackedScene" uid="uid://pu62j55jwj4g" path="res://Boss.tscn" id="9_wkp8b"]
+
+[sub_resource type="Curve2D" id="Curve2D_uu6xs"]
+_data = {
+"points": PackedVector2Array(0, 0, 100, 300, 0, 0, -91.53533, 85.62982, 91.53533, -85.62982, 263, 359, -140.25575, -19.192892, 140.25575, 19.192892, 452, 79, -144.68488, -19.192892, 144.68488, 19.192892, 608, 475, -126.96836, -7.3818817, 126.96836, 7.3818817, 905, 113, -143.2085, -1.4763763, 143.2085, 1.4763763, 1202.8177, 631.03455)
+}
+point_count = 6
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_cm0pq")
+tower_scene = ExtResource("1_uu6xs")
+tower_medium_scene = ExtResource("3_03owx")
+tower_heavy_scene = ExtResource("4_wkp8b")
+
+[node name="Towers" type="Node2D" parent="."]
+z_index = 20
+
+[node name="Enemies" type="Node2D" parent="."]
+z_index = 10
+
+[node name="Node2D" parent="Enemies" instance=ExtResource("2_r0du0")]
+
+[node name="Map" type="Node2D" parent="."]
+z_index = -10
+script = ExtResource("4_fos0i")
+
+[node name="Path2D" type="Path2D" parent="."]
+scale = Vector2(0.95359415, 1.0284698)
+curve = SubResource("Curve2D_uu6xs")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+rotation = 1.2490457
+
+[node name="BuildSpots" type="Node2D" parent="."]
+
+[node name="BuiltSpot" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(203, 255)
+
+[node name="BuiltSpot2" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(590, 410)
+
+[node name="BuiltSpot3" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(885, 401)
+
+[node name="BuiltSpot4" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(426, 35)
+
+[node name="BuiltSpot5" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(854, 167)
+
+[node name="BuiltSpot7" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(1057, 338)
+
+[node name="BuiltSpot9" parent="BuildSpots" instance=ExtResource("4_3dxm6")]
+position = Vector2(419, 235)
+
+[node name="Projectiles" type="Node2D" parent="."]
+z_index = 30
+
+[node name="Spawner" type="Node2D" parent="."]
+script = ExtResource("3_r0du0")
+enemy_scene = ExtResource("2_r0du0")
+boss_scene = ExtResource("9_wkp8b")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Gold" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 33.0
+
+[node name="Lives" type="Label" parent="UI"]
+offset_left = 100.0
+offset_top = 10.0
+offset_right = 140.0
+offset_bottom = 33.0
+
+[node name="Notifications" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 80.0
+offset_right = 50.0
+offset_bottom = 103.0
+
+[node name="TowerSelector" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("6_3dxm6")
+
+[node name="Panel" type="Panel" parent="UI/TowerSelector"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/TowerSelector/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BasicButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Basic Tower (10 gold)"
+
+[node name="MediumButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer"]
+layout_mode = 2
+text = " Medium Tower (15 gold)"
+
+[node name="HeavyButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Heavy Tower (20 gold)"
+
+[node name="CancelButton" type="Button" parent="UI/TowerSelector/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+light_mask = 15
+visibility_layer = 15
+limit_left = 0
+limit_top = -1
+limit_right = 1145
+limit_bottom = 646
