@@ -8,8 +8,9 @@ radius = 160.0
 
 [node name="Tower" type="Node2D" unique_id=1514839312]
 script = ExtResource("1_d5ma5")
-fire_interval = 0.2
+fire_interval = 0.3
 bullet_scene = ExtResource("2_b2h7p")
+bullet_damage = 2
 bullet_speed = 2000.0
 tower_color = Color(0.96486753, 0.5738662, 0.8882173, 1)
 

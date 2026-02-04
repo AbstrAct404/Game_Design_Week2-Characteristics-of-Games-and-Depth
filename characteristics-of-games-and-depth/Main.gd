@@ -10,6 +10,7 @@ var gold: int
 var lives: int
 var selected_spot = null
 var game_won: bool = false
+var game_over: bool = false
 
 @onready var towers_root: Node2D = $Towers
 @onready var ui_hint: Label = $UI/Notifications
@@ -20,8 +21,8 @@ var game_won: bool = false
 
 # Tower costs
 const BASIC_COST = 10
-const MEDIUM_COST = 15
-const HEAVY_COST = 20
+const MEDIUM_COST = 20
+const HEAVY_COST = 35
 
 var tower_selector: Control = null
 
@@ -29,6 +30,9 @@ func _ready() -> void:
 	gold = start_gold
 	lives = start_lives
 	_update_ui()
+	
+	# Allow this node to process input even when paused
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	for spot in $BuildSpots.get_children():
 		spot.clicked.connect(_on_build_spot_clicked)
@@ -51,6 +55,12 @@ func _ready() -> void:
 	cam.limit_right = int(world_rect.position.x + world_rect.size.x)
 	cam.limit_bottom = int(world_rect.position.y + world_rect.size.y)
 	debug_check_path_inside_world()
+
+func _input(event: InputEvent) -> void:
+	# Check for R key press for restart
+	if (game_over or game_won) and event is InputEventKey:
+		if event.keycode == KEY_R and event.pressed and not event.echo:
+			_restart_game()
 
 func _on_build_spot_clicked(spot) -> void:
 	if game_won:
@@ -166,8 +176,10 @@ func _on_enemy_reached_goal(_enemy) -> void:
 	_hint("Life -1")
 	_update_ui()
 	if lives <= 0:
+		game_over = true
+		spawner.stop_spawning()  # Stop spawner properly
 		_clear_game_entities()
-		_hint("Game Over - You Lost!")
+		_hint("Game Over - You Lost! Press R to Restart")
 		get_tree().paused = true
 
 func _on_enemy_died(enemy) -> void:
@@ -179,7 +191,7 @@ func _on_enemy_died(enemy) -> void:
 func _on_all_waves_completed() -> void:
 	game_won = true
 	_clear_game_entities()
-	_hint("VICTORY! You defeated all waves!")
+	_hint("VICTORY! You defeated all waves! Press R to Restart")
 	print("Player has won the game!")
 	# Optional: pause the game or show a victory screen
 	# get_tree().paused = true
@@ -213,6 +225,11 @@ func _clear_game_entities() -> void:
 		spot.queue_redraw()
 	
 	print("All game entities cleared from screen")
+
+func _restart_game() -> void:
+	print("Restarting game...")
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 func _hint(msg: String) -> void:
 	ui_hint.text = msg

@@ -1,11 +1,11 @@
 extends Node
 @export var enemy_scene: PackedScene
 @export var boss_scene: PackedScene
-@export var enemies_per_normal_wave: int = 5
+@export var enemies_per_normal_wave: int = 7
 @export var normal_waves_before_boss: int = 5
 @export var boss_cycles: int = 3
 @export var spawn_interval: float = 1.2
-@export var wave_delay: float = 1.5
+@export var wave_delay: float = 0.2
 
 @onready var main = get_tree().current_scene
 @onready var path: Path2D = main.get_node("Path2D")
@@ -21,6 +21,7 @@ var waiting_for_next_wave: bool = false
 var all_spawned: bool = false
 var waiting_for_wave_clear: bool = false
 var enemies_alive_in_wave: int = 0
+var game_stopped: bool = false
 
 signal all_waves_completed
 
@@ -28,6 +29,10 @@ func _ready() -> void:
 	_start_next_wave()
 
 func _process(delta: float) -> void:
+	# Don't process if game is stopped
+	if game_stopped:
+		return
+	
 	# Handle delay between waves
 	if waiting_for_next_wave:
 		wave_delay_timer += delta
@@ -78,14 +83,22 @@ func _start_next_wave() -> void:
 
 func _spawn_enemy() -> void:
 	var is_boss_wave = (current_wave >= normal_waves_before_boss)
-	var scene_to_spawn = boss_scene if is_boss_wave else enemy_scene
 	
-	if scene_to_spawn == null:
+	if enemy_scene == null or (is_boss_wave and boss_scene == null):
 		print("ERROR: Enemy scene not set!")
 		is_spawning = false
 		return
 	
-	var enemies_to_spawn = 1 if is_boss_wave else enemies_per_normal_wave
+	# For boss waves: spawn 1 boss + 5 regular enemies = 6 total
+	# For first wave ever: spawn 5 enemies
+	# For normal waves: spawn enemies_per_normal_wave (15)
+	var enemies_to_spawn = 0
+	if is_boss_wave:
+		enemies_to_spawn = 6
+	elif current_wave == 0 and current_cycle == 0:
+		enemies_to_spawn = 5  # First wave only has 5 enemies
+	else:
+		enemies_to_spawn = enemies_per_normal_wave  # All other normal waves have 15
 	
 	if spawned_in_wave >= enemies_to_spawn:
 		is_spawning = false
@@ -93,6 +106,14 @@ func _spawn_enemy() -> void:
 		waiting_for_wave_clear = true
 		print("All %d enemies spawned. Enemies alive: %d. Waiting for wave clear..." % [enemies_to_spawn, enemies_alive_in_wave])
 		return
+	
+	# Determine which scene to spawn
+	var scene_to_spawn = null
+	if is_boss_wave:
+		# First spawn is the boss, rest are regular enemies
+		scene_to_spawn = boss_scene if spawned_in_wave == 0 else enemy_scene
+	else:
+		scene_to_spawn = enemy_scene
 	
 	var e = scene_to_spawn.instantiate()
 	enemies_root.add_child(e)
@@ -107,12 +128,19 @@ func _spawn_enemy() -> void:
 	spawned_in_wave += 1
 	enemies_alive_in_wave += 1
 	
-	print("Spawned enemy %d/%d (alive in wave: %d)" % [spawned_in_wave, enemies_to_spawn, enemies_alive_in_wave])
+	var enemy_type = "Boss" if scene_to_spawn == boss_scene else "Enemy"
+	print("Spawned %s %d/%d (alive in wave: %d)" % [enemy_type, spawned_in_wave, enemies_to_spawn, enemies_alive_in_wave])
 
 func _on_enemy_removed(_enemy) -> void:
 	# Just decrement counter, don't call main handlers (they're already connected)
 	enemies_alive_in_wave -= 1
 	print("Enemy removed! Remaining in wave: %d" % enemies_alive_in_wave)
+
+func stop_spawning() -> void:
+	game_stopped = true
+	is_spawning = false
+	waiting_for_next_wave = false
+	print("Spawner stopped")
 
 func _end_wave() -> void:
 	print("=== _end_wave called ===")

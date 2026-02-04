@@ -53,19 +53,13 @@ position = Vector2(618, 385)
 position = Vector2(428, 241)
 
 [node name="BuiltSpot4" parent="BuildSpots" unique_id=1408821210 instance=ExtResource("4_3dxm6")]
-position = Vector2(659, 158)
+position = Vector2(586, 123)
 
 [node name="BuiltSpot5" parent="BuildSpots" unique_id=1366219606 instance=ExtResource("4_3dxm6")]
 position = Vector2(884, 275)
 
-[node name="BuiltSpot6" parent="BuildSpots" unique_id=253273040 instance=ExtResource("4_3dxm6")]
-position = Vector2(430, 40)
-
 [node name="BuiltSpot7" parent="BuildSpots" unique_id=1663204466 instance=ExtResource("4_3dxm6")]
 position = Vector2(893, 54)
-
-[node name="BuiltSpot8" parent="BuildSpots" unique_id=1058318223 instance=ExtResource("4_3dxm6")]
-position = Vector2(882, 481)
 
 [node name="BuiltSpot9" parent="BuildSpots" unique_id=982245654 instance=ExtResource("4_3dxm6")]
 position = Vector2(211, 476)

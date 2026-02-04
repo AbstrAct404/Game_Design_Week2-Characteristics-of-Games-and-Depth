@@ -8,7 +8,9 @@ radius = 160.0
 
 [node name="Tower" type="Node2D" unique_id=118933422]
 script = ExtResource("1_arn3v")
+fire_interval = 0.7
 bullet_scene = ExtResource("2_bn6qc")
+bullet_speed = 1200.0
 
 [node name="Range" type="Area2D" parent="." unique_id=2111852724]
 collision_mask = 3

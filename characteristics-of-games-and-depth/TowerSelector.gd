@@ -1,5 +1,4 @@
 extends Control
-
 signal tower_selected(tower_type)
 signal cancelled
 signal upgrade_selected(upgrade_to_type)
@@ -36,9 +35,9 @@ func show_upgrade_menu(pos: Vector2, tower_type: String) -> void:
 func _update_button_text_for_build() -> void:
 	basic_btn.text = "Basic Tower (10 gold)"
 	basic_btn.disabled = false
-	medium_btn.text = "Medium Tower (15 gold)"
+	medium_btn.text = "Medium Tower (20 gold)"
 	medium_btn.disabled = false
-	heavy_btn.text = "Heavy Tower (20 gold)"
+	heavy_btn.text = "Heavy Tower (35 gold)"
 	heavy_btn.disabled = false
 
 func _update_button_text_for_upgrade(tower_type: String) -> void:
@@ -46,16 +45,16 @@ func _update_button_text_for_upgrade(tower_type: String) -> void:
 		"basic":
 			basic_btn.text = "Already Basic"
 			basic_btn.disabled = true
-			medium_btn.text = "Upgrade to Medium (15 gold)"
+			medium_btn.text = "Upgrade to Medium (20 gold)"
 			medium_btn.disabled = false
-			heavy_btn.text = "Upgrade to Heavy (20 gold)"
+			heavy_btn.text = "Upgrade to Heavy (35 gold)"
 			heavy_btn.disabled = false
 		"medium":
 			basic_btn.text = "Cannot Downgrade"
 			basic_btn.disabled = true
 			medium_btn.text = "Already Medium"
 			medium_btn.disabled = true
-			heavy_btn.text = "Upgrade to Heavy (20 gold)"
+			heavy_btn.text = "Upgrade to Heavy (35 gold)"
 			heavy_btn.disabled = false
 		"heavy":
 			basic_btn.text = "Max Level"
